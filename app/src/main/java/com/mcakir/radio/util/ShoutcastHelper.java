@@ -20,13 +20,4 @@ public class ShoutcastHelper {
         return (new Gson()).fromJson(reader, new TypeToken<List<Shoutcast>>() {}.getType());
     }
 
-    public static List<String> getNames(List<Shoutcast> list){
-
-        List<String> names = new ArrayList<>();
-        for(Shoutcast item : list){
-            names.add(item.getName());
-        }
-        return names;
-    }
-
 }
