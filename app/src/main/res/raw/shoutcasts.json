@@ -1,0 +1,34 @@
+[
+  {
+    "name" : "BBC - Radio 1",
+    "stream" : "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p"
+  },
+  {
+    "name": "BBC - Radio 2",
+    "stream": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p"
+  },
+  {
+    "name": "BBC - Radio 3",
+    "stream": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio3_mf_p"
+  },
+  {
+    "name": "BBC - Radio 4",
+    "stream": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio4fm_mf_p"
+  },
+  {
+    "name": "BBC - Radio 5 live",
+    "stream": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio5live_mf_p"
+  },
+  {
+    "name": "BBC - Radio 6",
+    "stream": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_6music_mf_p"
+  },
+  {
+    "name": "BBC Radio Asian Network",
+    "stream": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_asianet_mf_p"
+  },
+  {
+    "name" : "BBC World Service",
+    "stream" : "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-eieuk"
+  }
+]
