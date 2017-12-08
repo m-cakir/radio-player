@@ -19,16 +19,16 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -38,7 +38,7 @@ import com.mcakir.radio.R;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class RadioService extends Service implements ExoPlayer.EventListener, AudioManager.OnAudioFocusChangeListener {
+public class RadioService extends Service implements Player.EventListener, AudioManager.OnAudioFocusChangeListener {
 
     public static final String ACTION_PLAY = "com.mcakir.radio.player.ACTION_PLAY";
     public static final String ACTION_PAUSE = "com.mcakir.radio.player.ACTION_PAUSE";
@@ -177,10 +177,9 @@ public class RadioService extends Service implements ExoPlayer.EventListener, Au
 
         handler = new Handler();
         DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        AdaptiveVideoTrackSelection.Factory videoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
-        DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-        DefaultLoadControl loadControl = new DefaultLoadControl();
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector, loadControl);
+        AdaptiveTrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        DefaultTrackSelector trackSelector = new DefaultTrackSelector(trackSelectionFactory);
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
         exoPlayer.addListener(this);
 
         registerReceiver(becomingNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
@@ -299,16 +298,16 @@ public class RadioService extends Service implements ExoPlayer.EventListener, Au
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
         switch (playbackState) {
-            case ExoPlayer.STATE_BUFFERING:
+            case Player.STATE_BUFFERING:
                 status = PlaybackStatus.LOADING;
                 break;
-            case ExoPlayer.STATE_ENDED:
+            case Player.STATE_ENDED:
                 status = PlaybackStatus.STOPPED;
                 break;
-            case ExoPlayer.STATE_IDLE:
+            case Player.STATE_IDLE:
                 status = PlaybackStatus.IDLE;
                 break;
-            case ExoPlayer.STATE_READY:
+            case Player.STATE_READY:
                 status = playWhenReady ? PlaybackStatus.PLAYING : PlaybackStatus.PAUSED;
                 break;
             default:
@@ -345,7 +344,27 @@ public class RadioService extends Service implements ExoPlayer.EventListener, Au
     }
 
     @Override
-    public void onPositionDiscontinuity() {
+    public void onRepeatModeChanged(int repeatMode) {
+
+    }
+
+    @Override
+    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+    }
+
+    @Override
+    public void onPositionDiscontinuity(int reason) {
+
+    }
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
+    }
+
+    @Override
+    public void onSeekProcessed() {
 
     }
 
