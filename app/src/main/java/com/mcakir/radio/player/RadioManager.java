@@ -49,7 +49,7 @@ public class RadioManager {
     public void bind() {
 
         Intent intent = new Intent(context, RadioService.class);
-        boolean bound = context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
         if(service != null)
             EventBus.getDefault().post(service.getStatus());
