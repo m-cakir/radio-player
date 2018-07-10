@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.mcakir.radio.R;
 
@@ -47,6 +48,7 @@ public class RadioService extends Service implements Player.EventListener, Audio
     private final IBinder iBinder = new LocalBinder();
 
     private Handler handler;
+    private final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     private SimpleExoPlayer exoPlayer;
     private MediaSessionCompat mediaSession;
     private MediaControllerCompat.TransportControls transportControls;
@@ -59,8 +61,6 @@ public class RadioService extends Service implements Player.EventListener, Audio
     private AudioManager audioManager;
 
     private MediaNotificationManager notificationManager;
-
-    private boolean serviceInUse = false;
 
     private String status;
 
@@ -80,9 +80,7 @@ public class RadioService extends Service implements Player.EventListener, Audio
         public void onReceive(Context context, Intent intent) {
 
             pause();
-
         }
-
     };
 
     private PhoneStateListener phoneStateListener = new PhoneStateListener() {
@@ -104,10 +102,8 @@ public class RadioService extends Service implements Player.EventListener, Audio
 
                 onGoingCall = false;
                 resume();
-
             }
         }
-
     };
 
     private MediaSessionCompat.Callback mediasSessionCallback = new MediaSessionCompat.Callback() {
@@ -139,10 +135,7 @@ public class RadioService extends Service implements Player.EventListener, Audio
     @Override
     public IBinder onBind(Intent intent) {
 
-        serviceInUse = true;
-
         return iBinder;
-
     }
 
     @Override
@@ -185,7 +178,6 @@ public class RadioService extends Service implements Player.EventListener, Audio
         registerReceiver(becomingNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
 
         status = PlaybackStatus.IDLE;
-
     }
 
     @Override
@@ -224,8 +216,6 @@ public class RadioService extends Service implements Player.EventListener, Audio
     @Override
     public boolean onUnbind(Intent intent) {
 
-        serviceInUse = false;
-
         if(status.equals(PlaybackStatus.IDLE))
             stopSelf();
 
@@ -234,8 +224,6 @@ public class RadioService extends Service implements Player.EventListener, Audio
 
     @Override
     public void onRebind(final Intent intent) {
-
-        serviceInUse = true;
 
     }
 
@@ -257,7 +245,6 @@ public class RadioService extends Service implements Player.EventListener, Audio
         unregisterReceiver(becomingNoisyReceiver);
 
         super.onDestroy();
-
     }
 
     @Override
@@ -322,7 +309,7 @@ public class RadioService extends Service implements Player.EventListener, Audio
     }
 
     @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
+    public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
 
     }
 
@@ -340,7 +327,6 @@ public class RadioService extends Service implements Player.EventListener, Audio
     public void onPlayerError(ExoPlaybackException error) {
 
         EventBus.getDefault().post(PlaybackStatus.ERROR);
-
     }
 
     @Override
@@ -378,22 +364,22 @@ public class RadioService extends Service implements Player.EventListener, Audio
 
         }
 
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, getClass().getSimpleName()), bandwidthMeter);
-        DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-        ExtractorMediaSource mediaSource = new ExtractorMediaSource(Uri.parse(streamUrl), dataSourceFactory, extractorsFactory, handler, null);
+//        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory(getUserAgent());
+
+        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(this, getUserAgent(), BANDWIDTH_METER);
+
+        ExtractorMediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+                .setExtractorsFactory(new DefaultExtractorsFactory())
+                .createMediaSource(Uri.parse(streamUrl));
 
         exoPlayer.prepare(mediaSource);
         exoPlayer.setPlayWhenReady(true);
-
     }
-
 
     public void resume() {
 
         if(streamUrl != null)
             play(streamUrl);
-
     }
 
     public void pause() {
@@ -423,7 +409,6 @@ public class RadioService extends Service implements Player.EventListener, Audio
             } else {
 
                 pause();
-
             }
 
         } else {
@@ -435,15 +420,12 @@ public class RadioService extends Service implements Player.EventListener, Audio
             }
 
             play(url);
-
         }
-
     }
 
     public String getStatus(){
 
         return status;
-
     }
 
     public MediaSessionCompat getMediaSession(){
@@ -461,8 +443,11 @@ public class RadioService extends Service implements Player.EventListener, Audio
         if (wifiLock != null && wifiLock.isHeld()) {
 
             wifiLock.release();
-
         }
+    }
 
+    private String getUserAgent(){
+
+        return Util.getUserAgent(this, getClass().getSimpleName());
     }
 }

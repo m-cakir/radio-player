@@ -95,13 +95,11 @@ public class MediaNotificationManager {
                         .setCancelButtonIntent(stopAction));
 
         service.startForeground(NOTIFICATION_ID, builder.build());
-
     }
 
     public void cancelNotify() {
 
         service.stopForeground(true);
-
     }
 
 }

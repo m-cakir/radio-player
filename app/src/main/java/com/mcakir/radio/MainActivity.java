@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         EventBus.getDefault().register(this);
-
     }
 
     @Override
@@ -77,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
 
         super.onStop();
-
     }
 
     @Override
@@ -86,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
         radioManager.unbind();
 
         super.onDestroy();
-
     }
 
     @Override
@@ -94,14 +91,12 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         radioManager.bind();
-
     }
 
     @Override
     public void onBackPressed() {
 
         finish();
-
     }
 
     @Subscribe
@@ -135,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
         if(TextUtils.isEmpty(streamURL)) return;
 
         radioManager.playOrPause(streamURL);
-
     }
 
     @OnItemClick(R.id.listview)
@@ -155,6 +149,5 @@ public class MainActivity extends AppCompatActivity {
         streamURL = shoutcast.getUrl();
 
         radioManager.playOrPause(streamURL);
-
     }
 }

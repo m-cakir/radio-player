@@ -33,7 +33,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     // full exoplayer library
-    implementation 'com.google.android.exoplayer:exoplayer:2.6.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
 
     // library modules
 //    implementation 'com.google.android.exoplayer:exoplayer-core:2.X.X'

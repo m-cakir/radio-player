@@ -38,7 +38,6 @@ public class RadioManager {
     public void playOrPause(String streamUrl){
 
         service.playOrPause(streamUrl);
-
     }
 
     public boolean isPlaying() {
@@ -58,7 +57,6 @@ public class RadioManager {
     public void unbind() {
 
         context.unbindService(serviceConnection);
-
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -68,7 +66,6 @@ public class RadioManager {
 
             service = ((RadioService.LocalBinder) binder).getService();
             serviceBound = true;
-
         }
 
         @Override
